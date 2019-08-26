@@ -1,9 +1,9 @@
 import 'dart:async';
 
-import 'package:chewie/src/chewie_player.dart';
-import 'package:chewie/src/chewie_progress_colors.dart';
-import 'package:chewie/src/material_progress_bar.dart';
-import 'package:chewie/src/utils.dart';
+import 'chewie_player.dart';
+import 'chewie_progress_colors.dart';
+import 'material_progress_bar.dart';
+import 'utils.dart';
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
 
@@ -24,6 +24,7 @@ class _MaterialControlsState extends State<MaterialControls> {
   Timer _showTimer;
   Timer _showAfterExpandCollapseTimer;
   bool _dragging = false;
+  bool _displayTapped = false;
 
   final barHeight = 48.0;
   final marginSize = 5.0;
@@ -156,15 +157,21 @@ class _MaterialControlsState extends State<MaterialControls> {
   Expanded _buildHitArea() {
     return Expanded(
       child: GestureDetector(
-        onTap: _latestValue != null && _latestValue.isPlaying
-            ? _cancelAndRestartTimer
-            : () {
-                _playPause();
-
-                setState(() {
-                  _hideStuff = true;
-                });
-              },
+        onTap: () {
+          if (_latestValue != null && _latestValue.isPlaying) {
+            if (_displayTapped) {
+              setState(() {
+                _hideStuff = true;
+              });
+            } else
+              _cancelAndRestartTimer();
+          } else {
+            _playPause();
+            setState(() {
+              _hideStuff = true;
+            });
+          }
+        },
         child: Container(
           color: Colors.transparent,
           child: Center(
@@ -273,6 +280,7 @@ class _MaterialControlsState extends State<MaterialControls> {
 
     setState(() {
       _hideStuff = false;
+      _displayTapped = true;
     });
   }
 
@@ -298,6 +306,7 @@ class _MaterialControlsState extends State<MaterialControls> {
       _hideStuff = true;
 
       chewieController.toggleFullScreen();
+      if (!chewieController.isFullScreen) Navigator.of(context).pop();
       _showAfterExpandCollapseTimer = Timer(Duration(milliseconds: 300), () {
         setState(() {
           _cancelAndRestartTimer();

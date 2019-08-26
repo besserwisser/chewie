@@ -1,7 +1,7 @@
 import 'dart:async';
 
-import 'package:chewie/src/chewie_progress_colors.dart';
-import 'package:chewie/src/player_with_controls.dart';
+import 'chewie_progress_colors.dart';
+import 'player_with_controls.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
@@ -61,10 +61,7 @@ class ChewieState extends State<Chewie> {
     if (widget.controller.isFullScreen && !_isFullScreen) {
       _isFullScreen = true;
       await _pushFullScreenWidget(context);
-    } else if (_isFullScreen) {
-      Navigator.of(context).pop();
-      _isFullScreen = false;
-    }
+    } 
   }
 
   @override
@@ -192,7 +189,7 @@ class ChewieController extends ChangeNotifier {
       DeviceOrientation.landscapeLeft,
       DeviceOrientation.landscapeRight,
     ],
-    this.routePageBuilder = null,
+    this.routePageBuilder,
   }) : assert(videoPlayerController != null,
             'You must provide a controller to play a video') {
     _initialize();
@@ -302,14 +299,11 @@ class ChewieController extends ChangeNotifier {
     }
 
     if (fullScreenByDefault) {
-      videoPlayerController.addListener(_fullScreenListener);
-    }
-  }
-
-  void _fullScreenListener() async {
-    if (videoPlayerController.value.isPlaying && !_isFullScreen) {
-      enterFullScreen();
-      videoPlayerController.removeListener(_fullScreenListener);
+      videoPlayerController.addListener(() async {
+        if (videoPlayerController.value.isPlaying && !_isFullScreen) {
+          enterFullScreen();
+        }
+      });
     }
   }
 
@@ -320,10 +314,15 @@ class ChewieController extends ChangeNotifier {
 
   void exitFullScreen() {
     _isFullScreen = false;
+    // Navigator.of(context).pop();
     notifyListeners();
   }
 
   void toggleFullScreen() {
+    // if(_isFullScreen) 
+    //   exitFullScreen();
+    // else 
+    //   enterFullScreen();
     _isFullScreen = !_isFullScreen;
     notifyListeners();
   }
