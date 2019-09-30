@@ -61,7 +61,7 @@ class ChewieState extends State<Chewie> {
     if (widget.controller.isFullScreen && !_isFullScreen) {
       _isFullScreen = true;
       await _pushFullScreenWidget(context);
-    } 
+    }
   }
 
   @override
@@ -129,6 +129,7 @@ class ChewieState extends State<Chewie> {
       SystemChrome.setPreferredOrientations([
         DeviceOrientation.landscapeLeft,
         DeviceOrientation.landscapeRight,
+        DeviceOrientation.portraitUp
       ]);
     }
 
@@ -319,9 +320,9 @@ class ChewieController extends ChangeNotifier {
   }
 
   void toggleFullScreen() {
-    // if(_isFullScreen) 
+    // if(_isFullScreen)
     //   exitFullScreen();
-    // else 
+    // else
     //   enterFullScreen();
     _isFullScreen = !_isFullScreen;
     notifyListeners();
